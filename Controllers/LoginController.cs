@@ -27,6 +27,11 @@ namespace Test_JWT_Authentication_With_Angular.Controllers
             new User {  FirstName = "Admin",  UserName = "admin", Password = "1234", UserType = "Admin" },
             new User {  FirstName = "Ankit",  UserName = "ankit", Password = "1234", UserType = "User" }
         };
+
+        public LoginController(IConfiguration config)
+        {
+            _config = config;
+        }
         // GET: api/<controller>
         [HttpGet]
         public IEnumerable<string> Get()
