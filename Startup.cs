@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
 using Test_JWT_Authentication_With_Angular.Models;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 
 namespace Test_JWT_Authentication_With_Angular
 {
@@ -26,6 +25,9 @@ namespace Test_JWT_Authentication_With_Angular
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationDbContext>(options =>
+      options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -46,7 +48,7 @@ namespace Test_JWT_Authentication_With_Angular
                     ValidIssuer = Configuration["Jwt:Issuer"],
                     ValidAudience = Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SecretKey"])),
-                    ClockSkew= TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero
                 };
                 services.AddCors();
 
@@ -59,7 +61,8 @@ namespace Test_JWT_Authentication_With_Angular
                 options.AccessDeniedPath = "/AccessDeniedPathInfo";
             });
 
-            services.AddAuthorization(config => {
+            services.AddAuthorization(config =>
+            {
                 config.AddPolicy(Policies.Admin, Policies.AdminPolicy());
                 config.AddPolicy(Policies.User, Policies.UserPolicy());
             });
