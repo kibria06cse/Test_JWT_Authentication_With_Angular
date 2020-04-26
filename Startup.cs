@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
 using Test_JWT_Authentication_With_Angular.Models;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Test_JWT_Authentication_With_Angular
 {
@@ -49,6 +50,13 @@ namespace Test_JWT_Authentication_With_Angular
                 };
                 services.AddCors();
 
+            });
+
+            services.AddAuthentication().AddFacebook(options =>
+            {
+                options.AppId = Configuration["FacebookAuthSettings:AppId"];
+                options.AppSecret = Configuration["FacebookAuthSettings:AppSecret"];
+                options.AccessDeniedPath = "/AccessDeniedPathInfo";
             });
 
             services.AddAuthorization(config => {
